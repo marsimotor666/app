@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vergaser-Abstimmung</title>
+    <style>
+        body { font-family: sans-serif; padding: 1rem; background: #f9f9f9; }
+        h1 { text-align: center; }
+        label { display: block; margin-top: 1rem; }
+        input, select, textarea { width: 100%; padding: 0.5rem; margin-top: 0.5rem; }
+        button { margin-top: 1.5rem; padding: 0.75rem; width: 100%; }
+        .result { background: #fff; margin-top: 2rem; padding: 1rem; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Vergaser-Abstimmung V2</h1>
+    <form id="setupForm">
+        <label>Vergasergröße (mm)
+            <select name="vergaser" required>
+                <option value="">Bitte wählen</option>
+                <option>12</option>
+                <option>17.5</option>
+                <option>19</option>
+                <option>21</option>
+                <option>24</option>
+            </select>
+        </label>
+
+        <label>Auspuffanlage
+            <select name="auspuff" required>
+                <option value="">Bitte wählen</option>
+                <option value="SCR Corse">SCR Corse (Race, 10.000–14.500 U/min)</option>
+                <option value="Yasuni R">Yasuni R (Sport, 8.500–11.500 U/min)</option>
+                <option value="Stage6 Pro Replica">Stage6 Pro Replica (Sport, 9.000–12.000 U/min)</option>
+                <option value="Yasuni C16">Yasuni C16 (Race, 10.000–13.500 U/min)</option>
+            </select>
+        </label>
+
+        <label>Tuningstufe
+            <select name="tuningstufe" required>
+                <option>Original</option>
+                <option>Offen Original</option>
+                <option>Sport</option>
+                <option>Race</option>
+                <option>Highend</option>
+            </select>
+        </label>
+
+        <label>Hauptdüse
+            <input type="number" name="hauptduese" required>
+        </label>
+
+        <label>Nebendüse
+            <input type="number" name="nebenduese" required>
+        </label>
+
+        <label>Gemischschraube (Umdrehungen herausgedreht)
+            <input type="number" step="0.1" name="gemisch" required>
+        </label>
+
+        <label>Kommentar / Setup-Notizen
+            <textarea name="kommentar" rows="3"></textarea>
+        </label>
+
+        <button type="submit">Analyse starten</button>
+    </form>
+
+    <div class="result" id="resultBox" style="display:none;"></div>
+
+    <script>
+        const form = document.getElementById('setupForm');
+        const resultBox = document.getElementById('resultBox');
+
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(form).entries());
+            const now = new Date().toLocaleString();
+
+            // Einfache Analyse-Logik (Platzhalter)
+            let analyse = `
+                <h3>Analyse (${now})</h3>
+                <p><strong>Vergaser:</strong> ${data.vergaser} mm</p>
+                <p><strong>Auspuff:</strong> ${data.auspuff}</p>
+                <p><strong>Tuningstufe:</strong> ${data.tuningstufe}</p>
+                <p><strong>HD:</strong> ${data.hauptduese}, <strong>ND:</strong> ${data.nebenduese}</p>
+                <p><strong>Gemischschraube:</strong> ${data.gemisch} Umdrehungen</p>
+                <p><strong>Hinweis:</strong> Prüfe, ob HD zu fett ist, wenn er in Teillast stottert.</p>
+                <p><strong>Notiz:</strong> ${data.kommentar}</p>
+            `;
+
+            resultBox.innerHTML = analyse;
+            resultBox.style.display = "block";
+
+            // Lokales Speichern im Browser
+            const logs = JSON.parse(localStorage.getItem("vergaserdaten") || "[]");
+            logs.push({ datum: now, ...data });
+            localStorage.setItem("vergaserdaten", JSON.stringify(logs));
+        }
+    </script>
+</body>
+</html>
